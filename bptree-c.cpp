@@ -17,18 +17,31 @@ class BPT {
         Node();
         void insert_and_sort(int key);
         void copy_to_temp(Temp *temp, int key);
+        void clear();
         bool is_leaf;
         int nkey;
         int key[CHILD_NUMBER];
         Node *children[CHILD_NUMBER + 1];
     };
 
-    void split(Temp *temp) {
-        // this->key[0] = temp->key[0];
-        // this->key[1] = temp->key[1];
-        // Node *node = new Node;
-        // node->key[0] = temp->key[2];
-        // node->key[1] = temp->key[3];
+    Node *root;
+
+    void split(Node *left, Temp *temp) {
+        cout << "split completed" << endl;
+        left->key[0] = temp->key[0];
+        left->key[1] = temp->key[1];
+        Node *right = new Node;
+        right->key[0] = temp->key[2];
+        right->key[1] = temp->key[3];
+        root = new Node;
+        root->children[0] = left;
+        root->children[1] = right;
+        root->key[0] = right->key[0];
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+                root->children[i]->key[j];
+            }
+        }
     }
 
     void make_rootnode() { Node *node = new Node; }
@@ -38,8 +51,25 @@ class BPT {
             node->insert_and_sort(key);
         } else {
             node->copy_to_temp(temp, key);
-            split(temp);
+            split(node, temp);
         }
+    }
+
+    void print_tree_core(Node *n) {
+        printf("[");
+        for (int i = 0; i < n->nkey; i++) {
+            if (!n->is_leaf) print_tree_core(n->children[i]);
+            printf("%d", n->key[i]);
+            if (i != n->nkey - 1 && n->is_leaf) putchar(' ');
+        }
+        if (!n->is_leaf) print_tree_core(n->children[n->nkey]);
+        printf("]");
+    }
+
+    void print_tree(Node *node) {
+        print_tree_core(node);
+        printf("\n");
+        fflush(stdout);
     }
 };
 
@@ -65,7 +95,6 @@ void BPT::Node::insert_and_sort(int key) {
 }
 
 void BPT::Node::copy_to_temp(Temp *temp, int key) {
-    cout << "copy to temp started" << endl;
     for (int i = 0; i < CHILD_NUMBER; i++) {
         temp->key[i] = this->key[i];  // tempにコピー
     }
@@ -78,6 +107,13 @@ void BPT::Node::copy_to_temp(Temp *temp, int key) {
             temp->key[i] = key;
         }
     }
+    clear();
+}
+
+void BPT::Node::clear() {
+    for (int i = 0; i < CHILD_NUMBER; i++) {
+        this->key[i] = 0;
+    }
 }
 
 int main() {
@@ -87,4 +123,6 @@ int main() {
     for (int i = 0; i < 4; i++) {
         bpt->insert(node, keys[i]);
     }
+
+    bpt->print_tree(bpt->root);
 }
