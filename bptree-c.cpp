@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 #define CHILD_NUMBER 3
 using namespace std;
@@ -27,21 +28,23 @@ class BPT {
     Node *root;
 
     void split(Node *left, Temp *temp) {
-        cout << "split completed" << endl;
-        left->key[0] = temp->key[0];
-        left->key[1] = temp->key[1];
+        int lnkey = floor((CHILD_NUMBER + 1) / 2);
+        for (int i = 0; i < lnkey; i++) {
+            left->key[i] = temp->key[i];
+        }
+        left->nkey = lnkey;
         Node *right = new Node;
-        right->key[0] = temp->key[2];
-        right->key[1] = temp->key[3];
+        int rnkey = (CHILD_NUMBER + 1) - lnkey;
+        for (int i = 0; i < rnkey; i++) {
+            right->key[i] = temp->key[i + lnkey];
+        }
+        right->nkey = rnkey;
         root = new Node;
         root->children[0] = left;
         root->children[1] = right;
         root->key[0] = right->key[0];
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
-                root->children[i]->key[j];
-            }
-        }
+        root->nkey++;
+        root->is_leaf = false;
     }
 
     void make_rootnode() { Node *node = new Node; }
